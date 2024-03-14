@@ -1,50 +1,48 @@
 # HIGHLANDER
 
-**Solo puede quedar uno**
+**There can be only one**
 
-## Reglas: 
+## Rules: 
 
-Mundo: Tablero (X x Y)
+World: Board (X x Y)
 
-El juego funciona por turnos
+The game works on a turn-based system.
 
-El juego se inicia con un tablero y una serie de personajes sobre el, en casillas aleatorias.
+The game starts with a board and a series of characters on it, in random positions.
 
-Cantidad de personajes: 12
+Number of characters: 12
 
-En cada turno los personajes realizan un movimiento aleatorio a cualquiera de las 8 casillas que tienen alrededor.
+On each turn, the characters make a random move to any of the 8 adjacent squares.
 
-Siempre que se encuentran, luchan.
+Whenever they meet, they fight.
 
-Solo puede quedar uno - El que pierde, muere decapitado.
+Only one can remain - The loser dies decapitated.
 
-*Los personajes tienen las siguientes caracteristicas:*
+*The characters have the following characteristics:*
 
 > Age
-> - Se incrementa en 1 por turno
+> - Increases by 1 per turn
 > 
 > Health
-> - Se incrementa en 1 por turno
-> - Se incrementa en 2 por cada combate (si ganas)
+> - Increases by 1 per turn
+> - Increases by 2 for each combat (if you win)
 > 
 > Strength
-> - Se incrementa en 1 por turno
-> - Suma a si mismo la fuerza del contrario vencido en combate
+> - Increases by 1 per turn
+> - Adds the defeated-in-combat opponent's strength to itself
  
-Las caracteristicas se asignan aleatoriamente al aparecer el personaje en el tablero, es decir, al inicio del juego.
+The characteristics are randomly assigned when the character appears on the board, i.e., at the beginning of the game.
  
-Los duelos son entre dos. Si tres coinciden, uno de los tres queda excluido de la lucha.
+The duels are between two characters. If three characters coincide, one of the three is excluded from the fight.
 
-Formas de calcular quien gana (escoger una)
-- La lucha es un 90% de salud y fuerza (3ptos salud, 1 de fuerza) y un 10% de suerte.
-- La lucha son los puntos de un tercio de salud + fuerza actual + 10% de suerte
+Ways to calculate who wins (choose one for the Kata)
+- The fight is 90% health and strength (3 health points, 1 strength point) and 10% luck.
+- The fight is one-third of current health + strength + 10% luck
 
-## RESTRICCIONES para segundas/terceras iteraciones de la KATA:
+## RESTRICTIONS for second/third iterations of the KATA:
 
-1. Casillas santuario (terreno sagrado) donde no se producen combates - aparecen aleatoriamente al principio del juego.
+1. Sanctuary squares (holy ground) where no fights occur - they appear randomly at the beginning of the game.
 
-2. Al principio del juego no aparecen todos los personajes en el tablero, solo algunos, y en cada turno puede o no aparecer un nuevo inmortal sobre el tablero (hasta llegar a 12)
+2. At the beginning of the game, not all characters appear on the board, only some, and in each turn a new immortal may or may not appear on the board (until reaching 12).
 
-3. En cada casilla donde se ha producido un combate se convierte en casilla santuario.
-
- 
+3. Each square where a fight has occurred becomes a sanctuary square.
