@@ -1,7 +1,11 @@
 using FakeItEasy;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
-namespace KataHighlander
+#nullable enable
+
+namespace Tests.KataHighlander
 {
 	public class GameTests
 	{
@@ -304,7 +308,7 @@ namespace KataHighlander
 			_game.Start();
 
 			int w1Strength = _game.Warriors.First(w => w.Id == warrior1Id).Strength;
-			int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id	).Strength;
+			int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id).Strength;
 
 			// ACT
 			_game.NextRound();
@@ -381,9 +385,21 @@ namespace KataHighlander
 				});
 			A.CallTo(() => fakeRelocator.GetEmptyRandomLocation(A<IGameState>._))
 				.ReturnsLazily((call) => _relocationEngine.GetEmptyRandomLocation(_game));
-			
+
 			return fakeRelocator;
 		}
 
+		[Fact]
+		public void AtLeastOneSanctuaryExistsAfterInitialization()
+		{
+			// Arrange
+			var world = new World(10, 10);
+
+			// Act
+			List<Point> sanctuaries = world.GetSanctuaryLocations();
+
+			// Assert
+			Assert.True(sanctuaries != null && sanctuaries.Count > 0, "There should be at least one sanctuary square after initialization.");
+		}
 	}
 }

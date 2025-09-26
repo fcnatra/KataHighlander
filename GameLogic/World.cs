@@ -27,5 +27,10 @@ namespace GameLogic
 
 			return direction;
 		}
-	}
+
+        public List<Point> GetSanctuaryLocations()
+        {
+			return [ new Point(0, 0) ];
+        }
+    }
 }

@@ -8,12 +8,13 @@ namespace WinFormUI
 		private ImageOps? _imageOps;
 		private List<WarriorUI> _warriorsUI = new();
 		private Game? _game;
+
 		private const int WORLD_X_WIDTH = 70;
 		private const int WORLD_Y_HEIGHT = 70;
-		private const int STD_IMAGE_SIZE = 10;
-		private const int MOVEMENT_SPEED_MS = 1;
+		private const int STANDARD_IMAGE_SIZE = 10;
+		private const int MOVEMENT_SPEED_MS = 200;
 
-		private Point AdjustLocationToCanvas(Point gameLocation) => new Point(gameLocation.X * STD_IMAGE_SIZE, gameLocation.Y * STD_IMAGE_SIZE);
+		private Point AdjustLocationToCanvas(Point gameLocation) => new Point(gameLocation.X * STANDARD_IMAGE_SIZE, gameLocation.Y * STANDARD_IMAGE_SIZE);
 
 		public FormWorld()
 		{
