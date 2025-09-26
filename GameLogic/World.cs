@@ -9,13 +9,26 @@ namespace GameLogic
 		public readonly int XStart = 0;
 		public readonly int YStart = 0;
 
-		public World(int xLimit, int yLimit)
-		{
-			this.XLimit = xLimit;
-			this.YLimit = yLimit;
-		}
 
-		public int XLimit { get; internal set; }
+		private readonly List<Point> _sanctuaryLocations = new List<Point>();
+
+		public World(int xLimit, int yLimit)
+        {
+            this.XLimit = xLimit;
+            this.YLimit = yLimit;
+
+            AddSanctuariesAtRandomLocations(xLimit, yLimit);
+        }
+
+        private void AddSanctuariesAtRandomLocations(int xLimit, int yLimit)
+        {
+            var rand = new Random();
+            int x = rand.Next(XStart, xLimit + 1);
+            int y = rand.Next(YStart, yLimit + 1);
+            _sanctuaryLocations.Add(new Point(x, y));
+        }
+
+        public int XLimit { get; internal set; }
 		public int YLimit { get; internal set; }
 		public List<Point> FightLocations { get; set; } = new List<Point>();
 
@@ -28,9 +41,9 @@ namespace GameLogic
 			return direction;
 		}
 
-        public List<Point> GetSanctuaryLocations()
-        {
-			return [ new Point(0, 0) ];
-        }
+		public List<Point> GetSanctuaryLocations()
+		{
+			return new List<Point>(_sanctuaryLocations);
+		}
     }
 }
