@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Drawing;
-using Xunit;
-using GameLogic;
 
 namespace Tests.KataHighlander
 {
@@ -14,7 +12,7 @@ namespace Tests.KataHighlander
             var world = new World(10, 10);
 
             // Act
-            List<Point> sanctuaries = world.GetSanctuaryLocations();
+            HashSet<Point> sanctuaries = world.GetSanctuaryLocations();
 
             // Assert
             Assert.True(sanctuaries != null && sanctuaries.Count > 0, "There should be at least one sanctuary square after initialization.");

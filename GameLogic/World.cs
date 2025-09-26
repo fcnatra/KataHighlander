@@ -10,22 +10,36 @@ namespace GameLogic
 		public readonly int YStart = 0;
 
 
-		private readonly List<Point> _sanctuaryLocations = new List<Point>();
+		private readonly HashSet<Point> _sanctuaryLocations = new HashSet<Point>();
 
 		public World(int xLimit, int yLimit)
         {
             this.XLimit = xLimit;
             this.YLimit = yLimit;
 
-            AddSanctuariesAtRandomLocations(xLimit, yLimit);
+            AddSanctuariesAtRandomLocations();
         }
 
-        private void AddSanctuariesAtRandomLocations(int xLimit, int yLimit)
+		private void AddSanctuariesAtRandomLocations()
         {
-            var rand = new Random();
-            int x = rand.Next(XStart, xLimit + 1);
-            int y = rand.Next(YStart, yLimit + 1);
-            _sanctuaryLocations.Add(new Point(x, y));
+            int count = CalcSanctuariesToBuild();
+
+            Random rand = new Random();
+            while (_sanctuaryLocations.Count < count)
+            {
+                int x = rand.Next(XStart, XLimit + 1);
+                int y = rand.Next(YStart, YLimit + 1);
+                var pt = new Point(x, y);
+				
+                if (!_sanctuaryLocations.Contains(pt))
+					_sanctuaryLocations.Add(pt);
+            }
+        }
+
+        private int CalcSanctuariesToBuild()
+        {
+            int area = XLimit * YLimit;
+            return Math.Max(1, area / 33); // sample ratio: 3 for 10x10
         }
 
         public int XLimit { get; internal set; }
@@ -41,9 +55,9 @@ namespace GameLogic
 			return direction;
 		}
 
-		public List<Point> GetSanctuaryLocations()
+		public HashSet<Point> GetSanctuaryLocations()
 		{
-			return new List<Point>(_sanctuaryLocations);
+			return new HashSet<Point>(_sanctuaryLocations);
 		}
     }
 }
