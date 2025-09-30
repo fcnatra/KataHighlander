@@ -16,30 +16,6 @@ namespace GameLogic
         {
             this.XLimit = xLimit;
             this.YLimit = yLimit;
-
-            AddSanctuariesAtRandomLocations();
-        }
-
-		private void AddSanctuariesAtRandomLocations()
-        {
-            int count = CalcSanctuariesToBuild();
-
-            Random rand = new Random();
-            while (_sanctuaryLocations.Count < count)
-            {
-                int x = rand.Next(XStart, XLimit + 1);
-                int y = rand.Next(YStart, YLimit + 1);
-                var pt = new Point(x, y);
-				
-                if (!_sanctuaryLocations.Contains(pt))
-					_sanctuaryLocations.Add(pt);
-            }
-        }
-
-        private int CalcSanctuariesToBuild()
-        {
-            int area = XLimit * YLimit;
-            return Math.Max(1, area / 33); // sample ratio: 3 for 10x10
         }
 
         public int XLimit { get; internal set; }
@@ -53,11 +29,6 @@ namespace GameLogic
 			if (from.X > to.X) direction = Direction.Left; else if (from.X < to.X) { direction = Direction.Right; }
 
 			return direction;
-		}
-
-		public HashSet<Point> GetSanctuaryLocations()
-		{
-			return new HashSet<Point>(_sanctuaryLocations);
 		}
     }
 }
