@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "C#: WinFormUI",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\WinFormUI\\WinFormUI.csproj",
+            "launchConfigurationId": "TargetFramework=;WinFormUI"
+        }
+    ]
+}
