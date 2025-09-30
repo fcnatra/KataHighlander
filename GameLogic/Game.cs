@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 
 namespace GameLogic
 {
@@ -77,6 +78,7 @@ namespace GameLogic
 
 				var winner = BattleField?.FightAndGetWinner(warrior1, warrior2);
 
+				Debug.WriteLine($"Warrior fight at {warrior1.Location} between {warrior1.Name} and {warrior2.Name} and the winner is {winner?.Name}");
 				if (winner == warrior1) RemoveLooser(warrior2);
 				if (winner == warrior2) RemoveLooser(warrior1);
 			};

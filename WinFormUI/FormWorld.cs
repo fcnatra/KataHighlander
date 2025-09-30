@@ -9,8 +9,8 @@ namespace WinFormUI
 		private List<WarriorUI> _warriorsUI = new();
 		private Game? _game;
 
-		private const int WORLD_X_WIDTH = 70;
-		private const int WORLD_Y_HEIGHT = 70;
+		private const int WORLD_X_WIDTH = 50;
+		private const int WORLD_Y_HEIGHT = 50;
 		private const int STANDARD_IMAGE_SIZE = 10;
 		private const int MOVEMENT_SPEED_MS = 50;
 
