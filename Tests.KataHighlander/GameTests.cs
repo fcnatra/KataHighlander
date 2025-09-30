@@ -41,7 +41,7 @@ namespace Tests.KataHighlander
 		{
 			_game.Relocator = _relocationEngine;
 			_game.Attributor = _attributor;
-			
+
 			// ACT
 			_game.CreateDefaultWarriors();
 
@@ -233,46 +233,82 @@ namespace Tests.KataHighlander
 		public void GivenAFight_WarriorWithAttr63_WinsToWarriorWithAttr23()
 		{
 			// ARRANGE
-			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
-			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 2, Strength = 3 } };
+			var warrior1 = new Warrior
+			{
+				Id = 1,
+				Location = new Point(3, 3),
+				Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
+			};
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
-			IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
+			var warrior2 = new Warrior
+			{
+				Id = 2,
+				Location = new Point(3, 3),
+				Attributes = new WarriorAttributes { Health = 2, Strength = 3 }
+			};
+
+			IRelocator fakeRelocator = A.Fake<IRelocator>();
+			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
+				.ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
+				{
+					warrior.Location = new Point(4, 4);
+					return warrior.Location;
+				});;
 
 			_game.BattleField = new FightEngine();
-			_game.BattleField.Attributor = fakeAttributor;
+			_game.BattleField.Attributor = _attributor;
 			_game.Relocator = fakeRelocator;
-			_game.Attributor = fakeAttributor;
+			_game.Attributor = _attributor;
+
+			_game.Warriors.Add(warrior1);
+			_game.Warriors.Add(warrior2);
 
 			// ACT
-			_game.CreateDefaultWarriors();
 			_game.NextRound();
 
 			// ASSERT
-			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior2Desired.Id);
+			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior2.Id);
 		}
 
 		[Fact]
 		public void GivenAFight_Warrior62_LossesTo_Warrior63()
 		{
 			// ARRANGE
-			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 2 } };
-			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
+			var warrior1 = new Warrior
+			{
+				Id = 1,
+				Location = new Point(3, 3),
+				Attributes = new WarriorAttributes { Health = 6, Strength = 2 }
+			};
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
-			IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
+			var warrior2 = new Warrior
+			{
+				Id = 2,
+				Location = new Point(3, 3),
+				Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
+			};
+
+			IRelocator fakeRelocator = A.Fake<IRelocator>();
+			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
+				.ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
+				{
+					warrior.Location = new Point(4, 4);
+					return warrior.Location;
+				});;
 
 			_game.BattleField = new FightEngine();
-			_game.BattleField.Attributor = fakeAttributor;
+			_game.BattleField.Attributor = _attributor;
 			_game.Relocator = fakeRelocator;
-			_game.Attributor = fakeAttributor;
-			_game.CreateDefaultWarriors();
+			_game.Attributor = _attributor;
+
+			_game.Warriors.Add(warrior1);
+			_game.Warriors.Add(warrior2);
 
 			// ACT
 			_game.NextRound();
 
 			// ASSERT
-			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior1Desired.Id);
+			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior1.Id);
 		}
 
 		[Fact]
