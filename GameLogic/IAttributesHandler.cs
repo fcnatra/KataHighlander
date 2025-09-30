@@ -3,7 +3,7 @@ namespace GameLogic
 {
 	public interface IAttributesHandler
 	{
-		void AssignRandomAttributesToWarrior(Warrior warrior);
+		WarriorAttributes CreateRandomAttributes();
 		void GiveWinnerAttributesFromLosser(Warrior winner, Warrior looser);
 		void UpdateWarriorAttributesForNextRound(Warrior warrior);
 	}

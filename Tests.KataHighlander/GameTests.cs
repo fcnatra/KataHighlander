@@ -26,24 +26,29 @@ namespace Tests.KataHighlander
 		[Fact]
 		public void WhenGameStarts_ThereAre_12WarriorsInTheWorld()
 		{
+			var game = new Game(new World(10, 10));
+			game.Attributor = A.Fake<IAttributesHandler>();
+
 			// ACT
-			_game.Start();
+			game.Start();
 
 			// ASSERT
 			var expectedNumberOfWarriors = 12;
-			Assert.Equal(expectedNumberOfWarriors, _game.Warriors.Count());
+			Assert.Equal(expectedNumberOfWarriors, game.Warriors.Count());
 		}
 
 		[Fact]
 		public void WhenGameStarts_EachWarriorIsIn_DifferentLocation()
 		{
-			_game.Relocator = new RelocationEngine();
+			var game = new Game(new World(10, 10));
+			game.Attributor = A.Fake<IAttributesHandler>();
+			game.Relocator = new RelocationEngine();
 
 			// ACT
-			_game.Start();
+			game.Start();
 
 			// ASSERT
-			var warriors = _game.Warriors;
+			var warriors = game.Warriors;
 			var locations = warriors.Select(w => w.Location);
 			Assert.Equal(locations.Count(), locations.Distinct().Count());
 		}
@@ -51,16 +56,20 @@ namespace Tests.KataHighlander
 		[Fact]
 		public void WhenASecondGameStarts_WarriorsLocationsAre_DifferentThanInFirst()
 		{
+			var game = new Game(new World(10, 10));
+			game.Attributor = A.Fake<IAttributesHandler>();
+			game.Relocator = new RelocationEngine();
+
 			var secondGame = new Game(_world);
-			_game.Relocator = new RelocationEngine();
+			secondGame.Attributor = A.Fake<IAttributesHandler>();
 			secondGame.Relocator = new RelocationEngine();
 
 			// ACT
-			_game.Start();
+			game.Start();
 			secondGame.Start();
 
 			// ASSERT
-			var warriors1 = _game.Warriors;
+			var warriors1 = game.Warriors;
 			var locations1 = warriors1.Select(w => w.Location);
 
 			var warriors2 = secondGame.Warriors;
@@ -72,35 +81,40 @@ namespace Tests.KataHighlander
 		[Fact]
 		public void WhenGameStarts_AllWarriorsAre_InsideWorldLimits()
 		{
-
-			_game.Relocator = new RelocationEngine();
+            World world = new(10, 10);
+            var game = new Game(world);
+			game.Attributor = A.Fake<IAttributesHandler>();
+			game.Relocator = new RelocationEngine();
 
 			// ACT
-			_game.Start();
+			game.Start();
 
 			// ASSERT
-			var warriors = _game.Warriors;
+			var warriors = game.Warriors;
 			var locations = warriors.Select(w => w.Location);
 			var xCoords = locations.Select(x => x.X);
 			var yCoords = locations.Select(y => y.Y);
 
 			Assert.True(xCoords.Min() >= 0);
-			Assert.True(xCoords.Max() <= _world.XLimit);
+			Assert.True(xCoords.Max() <= world.XLimit);
 			Assert.True(yCoords.Min() >= 0);
-			Assert.True(yCoords.Max() <= _world.YLimit);
+			Assert.True(yCoords.Max() <= world.YLimit);
 		}
 
 		[Fact]
 		public void GivenNextRound_AllWarriors_Move()
 		{
 			// ARRANGE
-			_game.Relocator = new RelocationEngine();
-			_game.Start();
-			var warriors = _game.Warriors;
+            World world = new(10, 10);
+            var game = new Game(world);
+			game.Attributor = A.Fake<IAttributesHandler>();
+			game.Relocator = new RelocationEngine();
+			game.Start();
+			var warriors = game.Warriors;
 			var locations = warriors.Select(w => w.Location).ToList();
 
 			// ACT
-			_game.NextRound();
+			game.NextRound();
 
 			// ASSERT
 			var locationsNextRound = warriors.Select(w => w.Location);
@@ -139,6 +153,7 @@ namespace Tests.KataHighlander
 			var world = new World(4, 3);
 			_game = new Game(world);
 			_game.Relocator = new RelocationEngine();
+			_game.Attributor = new AttributesHandler();
 			_game.Start();
 			var warriors = _game.Warriors;
 
@@ -198,6 +213,7 @@ namespace Tests.KataHighlander
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Id, warrior2Id);
 			IFightEngine fakeFightEngine = A.Fake<IFightEngine>();
 
+			_game.Attributor = new AttributesHandler();
 			_game.Relocator = fakeRelocator;
 			_game.BattleField = fakeFightEngine;
 			_game.Start();
@@ -213,14 +229,14 @@ namespace Tests.KataHighlander
 		}
 
 		[Fact]
-		public void GivenAFight_BetweenWarriors6_3_and_2_3_Warrior63_Wins()
+		public void GivenAFight_WarriorWithAttr63_WinsToWarriorWithAttr23()
 		{
 			// ARRANGE
 			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
 			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 2, Strength = 3 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
-			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
+			IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = fakeAttributor;
@@ -236,14 +252,14 @@ namespace Tests.KataHighlander
 		}
 
 		[Fact]
-		public void GivenAFight_BetweenWarriors6_2_and_6_3_Warrior63_Wins()
+		public void GivenAFight_Warrior62_LossesTo_Warrior63()
 		{
 			// ARRANGE
 			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 2 } };
 			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
-			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
+			IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = fakeAttributor;
@@ -266,7 +282,7 @@ namespace Tests.KataHighlander
 			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 1, Strength = 1 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
-			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
+			IAttributesHandler fakeAttributor = new AttributesHandler();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = fakeAttributor;
@@ -353,7 +369,7 @@ namespace Tests.KataHighlander
 		private static IAttributesHandler FakeAttributor_ThatAssignAttributes_ToWarriorsByName(Warrior w1ToAssign, Warrior w2ToAssign)
 		{
 			   IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
-			   A.CallTo(() => fakeAttributor.AssignRandomAttributesToWarrior(A<Warrior>._))
+			   A.CallTo(() => fakeAttributor.CreateRandomAttributes())
 				   .WhenArgumentsMatch((Warrior warrior) => warrior.Id == w1ToAssign.Id || warrior.Id == w2ToAssign.Id)
 				   .Invokes((Warrior warrior) =>
 				   {

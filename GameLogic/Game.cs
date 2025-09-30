@@ -46,13 +46,16 @@ namespace GameLogic
 
 		private void CreateWarriors()
 		{
+			if (Attributor == null)
+				throw new InvalidOperationException("Attributor is not set.");
+
 			for (int warriorId = 0; warriorId < NUMBER_OF_WARRIORS; warriorId++)
 			{
 				var warrior = new Warrior { Id = warriorId, Name = WarriorNames[warriorId] };
 
 				warrior.Location = Relocator?.GetEmptyRandomLocation(this) ?? Point.Empty;
 
-				Attributor?.AssignRandomAttributesToWarrior(warrior);
+				warrior.Attributes = Attributor.CreateRandomAttributes();
 
 				_warriors.Add(warrior);
 			}

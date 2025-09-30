@@ -13,13 +13,15 @@
             _randomizer = new Random(this.GetHashCode() + DateTime.Now.Microsecond);
         }
 
-        public void AssignRandomAttributesToWarrior(Warrior warrior)
+        public WarriorAttributes CreateRandomAttributes()
 		{
-			var attr = warrior.Attributes;
+			var attr = new WarriorAttributes();
 
 			attr.Age = _randomizer.Next(minAge, randomMaxAge);
 			attr.Health = _randomizer.Next(minAttribute, randomMaxAttribute);
 			attr.Strength = _randomizer.Next(minAttribute, randomMaxAttribute);
+
+			return attr;
 		}
 
 		public void UpdateWarriorAttributesForNextRound(Warrior warrior)
