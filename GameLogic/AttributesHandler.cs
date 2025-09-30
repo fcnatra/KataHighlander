@@ -15,23 +15,30 @@
 
         public void AssignRandomAttributesToWarrior(Warrior warrior)
 		{
-			warrior.Age = _randomizer.Next(minAge, randomMaxAge);
-			warrior.Health = _randomizer.Next(minAttribute, randomMaxAttribute);
-			warrior.Strength = _randomizer.Next(minAttribute, randomMaxAttribute);
+			var attr = warrior.Attributes;
+
+			attr.Age = _randomizer.Next(minAge, randomMaxAge);
+			attr.Health = _randomizer.Next(minAttribute, randomMaxAttribute);
+			attr.Strength = _randomizer.Next(minAttribute, randomMaxAttribute);
 		}
 
 		public void UpdateWarriorAttributesForNextRound(Warrior warrior)
 		{
-			warrior.Age++;
-			warrior.Health++;
-			warrior.Strength++;
+			var attr = warrior.Attributes;
+
+			attr.Age++;
+			attr.Health++;
+			attr.Strength++;
 		}
 
 		public void GiveWinnerAttributesFromLosser(Warrior winner, Warrior looser)
 		{
-			winner.Health += 2;
-			winner.Strength += looser.Strength;
-			looser.Strength = 0;
+			var winnerAttr = winner.Attributes;
+			var looserAttr = looser.Attributes;
+
+			winnerAttr.Health += 2;
+			winnerAttr.Strength += looserAttr.Strength;
+			looserAttr.Strength = 0;
 		}
 	}
 }

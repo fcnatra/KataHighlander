@@ -15,8 +15,8 @@
 		public Warrior? FightAndGetWinner(Warrior warrior1, Warrior warrior2)
 		{
 			Warrior? winner = null;
-			WarriorRank rank1 = CalcRank(warrior1);
-			WarriorRank rank2 = CalcRank(warrior2);
+			WarriorRank rank1 = CalculateRank(warrior1);
+			WarriorRank rank2 = CalculateRank(warrior2);
 
 			(rank1, rank2) = AssignLuckyBonus(rank1, rank2);
 
@@ -45,6 +45,6 @@
 
 		private double LuckyBonus(WarriorRank rank) => rank.Rank * 0.1;
 
-		private WarriorRank CalcRank(Warrior warrior) => new WarriorRank(warrior, (warrior.Health / (double)3) + warrior.Strength);
+		private WarriorRank CalculateRank(Warrior warrior) => new WarriorRank(warrior, (warrior.Attributes.Health / (double)3) + warrior.Attributes.Strength);
 	}
 }

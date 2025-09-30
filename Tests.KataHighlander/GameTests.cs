@@ -1,5 +1,4 @@
 using FakeItEasy;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -117,17 +116,17 @@ namespace Tests.KataHighlander
 
 			_game.Start();
 			var warriors = _game.Warriors;
-			var ages = warriors.Select(w => w.Age + 1).ToList();
-			var healths = warriors.Select(w => w.Health + 1).ToList();
-			var strengths = warriors.Select(w => w.Strength + 1).ToList();
+			var ages = warriors.Select(w => w.Attributes.Age + 1).ToList();
+			var healths = warriors.Select(w => w.Attributes.Health + 1).ToList();
+			var strengths = warriors.Select(w => w.Attributes.Strength + 1).ToList();
 
 			// ACT
 			_game.NextRound();
 
 			// ASSERT
-			var agesNextRound = warriors.Select(w => w.Age);
-			var healthsNextRound = warriors.Select(w => w.Health);
-			var strengthsNextRound = warriors.Select(w => w.Strength);
+			var agesNextRound = warriors.Select(w => w.Attributes.Age);
+			var healthsNextRound = warriors.Select(w => w.Attributes.Health);
+			var strengthsNextRound = warriors.Select(w => w.Attributes.Strength);
 			Assert.Equal(ages, agesNextRound);
 			Assert.Equal(healths, healthsNextRound);
 			Assert.Equal(strengths, strengthsNextRound);
@@ -187,7 +186,7 @@ namespace Tests.KataHighlander
 			_game.Start();
 
 			// ASSERT
-			Assert.DoesNotContain(_game.Warriors, w => w.Age == 0 || w.Health == 0 || w.Strength == 0);
+			   Assert.DoesNotContain(_game.Warriors, w => w.Attributes.Age == 0 || w.Attributes.Health == 0 || w.Attributes.Strength == 0);
 		}
 
 		[Fact]
@@ -217,8 +216,8 @@ namespace Tests.KataHighlander
 		public void GivenAFight_BetweenWarriors6_3_and_2_3_Warrior63_Wins()
 		{
 			// ARRANGE
-			var warrior1Desired = new Warrior { Id = 1, Health = 6, Strength = 3 };
-			var warrior2Desired = new Warrior { Id = 2, Health = 2, Strength = 3 };
+			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
+			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 2, Strength = 3 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
 			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
@@ -240,8 +239,8 @@ namespace Tests.KataHighlander
 		public void GivenAFight_BetweenWarriors6_2_and_6_3_Warrior63_Wins()
 		{
 			// ARRANGE
-			var warrior1Desired = new Warrior { Id = 1, Health = 6, Strength = 2 };
-			var warrior2Desired = new Warrior { Id = 2, Health = 6, Strength = 3 };
+			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 2 } };
+			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 6, Strength = 3 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
 			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
@@ -263,8 +262,8 @@ namespace Tests.KataHighlander
 		public void GivenAFight_BetweenWarriors1_and_2_WorldRegistersAFight_InThatLocation()
 		{
 			// ARRANGE
-			var warrior1Desired = new Warrior { Id = 1, Health = 6, Strength = 2 };
-			var warrior2Desired = new Warrior { Id = 2, Health = 1, Strength = 1 };
+			var warrior1Desired = new Warrior { Id = 1, Attributes = new WarriorAttributes { Health = 6, Strength = 2 } };
+			var warrior2Desired = new Warrior { Id = 2, Attributes = new WarriorAttributes { Health = 1, Strength = 1 } };
 
 			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Desired.Id, warrior2Desired.Id);
 			IAttributesHandler fakeAttributor = FakeAttributor_ThatAssignAttributes_ToWarriorsByName(warrior1Desired, warrior2Desired);
@@ -307,14 +306,14 @@ namespace Tests.KataHighlander
 			_game.BattleField = fakeBattleField;
 			_game.Start();
 
-			int w1Strength = _game.Warriors.First(w => w.Id == warrior1Id).Strength;
-			int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id).Strength;
+			   int w1Strength = _game.Warriors.First(w => w.Id == warrior1Id).Attributes.Strength;
+			   int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id).Attributes.Strength;
 
 			// ACT
 			_game.NextRound();
 
 			// ASSERT
-			Assert.Equal(w1Strength + w2Strength + 1, winner?.Strength);
+			Assert.Equal(w1Strength + w2Strength + 1, winner?.Attributes.Strength);
 		}
 
 		[Fact]
@@ -341,32 +340,34 @@ namespace Tests.KataHighlander
 			_game.BattleField = fakeBattleField;
 			_game.Start();
 
-			int w1Health = _game.Warriors.First(w => w.Id == warrior1Id).Health;
-			int w2Health = _game.Warriors.First(w => w.Id == warrior2Id).Health;
+			   int w1Health = _game.Warriors.First(w => w.Id == warrior1Id).Attributes.Health;
+			   int w2Health = _game.Warriors.First(w => w.Id == warrior2Id).Attributes.Health;
 
 			// ACT
 			_game.NextRound();
 
 			// ASSERT
-			Assert.Equal((winner?.Id == warrior1Id ? w1Health : w2Health) + 3, winner?.Health);
+			   Assert.Equal((winner?.Id == warrior1Id ? w1Health : w2Health) + 3, winner?.Attributes.Health);
 		}
 
 		private static IAttributesHandler FakeAttributor_ThatAssignAttributes_ToWarriorsByName(Warrior w1ToAssign, Warrior w2ToAssign)
 		{
-			IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
-			A.CallTo(() => fakeAttributor.AssignRandomAttributesToWarrior(A<Warrior>._))
-				.WhenArgumentsMatch((Warrior warrior) => warrior.Id == w1ToAssign.Id || warrior.Id == w2ToAssign.Id)
-				.Invokes((Warrior warrior) =>
-				{
-					if (warrior.Id == w1ToAssign.Id)
-					{
-						warrior.Health = w1ToAssign.Health; warrior.Strength = w1ToAssign.Strength;
-					}
-					else
-					{
-						warrior.Health = w2ToAssign.Health; warrior.Strength = w2ToAssign.Strength;
-					}
-				});
+			   IAttributesHandler fakeAttributor = A.Fake<IAttributesHandler>();
+			   A.CallTo(() => fakeAttributor.AssignRandomAttributesToWarrior(A<Warrior>._))
+				   .WhenArgumentsMatch((Warrior warrior) => warrior.Id == w1ToAssign.Id || warrior.Id == w2ToAssign.Id)
+				   .Invokes((Warrior warrior) =>
+				   {
+					   if (warrior.Id == w1ToAssign.Id)
+					   {
+						   warrior.Attributes.Health = w1ToAssign.Attributes.Health;
+						   warrior.Attributes.Strength = w1ToAssign.Attributes.Strength;
+					   }
+					   else
+					   {
+						   warrior.Attributes.Health = w2ToAssign.Attributes.Health;
+						   warrior.Attributes.Strength = w2ToAssign.Attributes.Strength;
+					   }
+				   });
 			A.CallTo(() => fakeAttributor.GiveWinnerAttributesFromLosser(A<Warrior>._, A<Warrior>._))
 				.Invokes((Warrior winner, Warrior looser) => { new AttributesHandler().GiveWinnerAttributesFromLosser(winner, looser); });
 

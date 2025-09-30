@@ -12,9 +12,7 @@ namespace GameLogic
 			get { return _location; }
 			set { _previousLocation = _location; _location = value; }
 		}
-		public int Age { get; set; }
-		public int Health { get; set; }
-		public int Strength { get; set; }
+		public WarriorAttributes Attributes { get; set; } = new WarriorAttributes();
 		public string Name { get; set; } = string.Empty;
 		public int Id { get; set; }
 	}
