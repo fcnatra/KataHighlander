@@ -8,13 +8,30 @@ namespace GameLogic
 		private readonly Point MOVE_OFFSET = new Point(1, 1);
 		private List<Warrior> _warriors;
 		private Random _randomizer;
+		
+		private static readonly List<string> WarriorNames = new List<string>
+		{
+			"Connor MacLeod",
+			"Ramírez",
+			"Duncan MacLeod",
+			"The Kurgan",
+			"Kronos",
+			"Timothy of Gilliam",
+			"Danny O'Donal",
+			"Methos",
+			"Mako",
+			"Richie Ryan",
+			"Slan Quince",
+			"Kiem Sun",
+			"Felicia Martins"
+		};
 
 		public List<Warrior> Warriors { get { return new List<Warrior>(_warriors); } }
 		public World Gameboard { get ; set; }
 		public IRelocator? Relocator { get; set; }
 		public IFightEngine? BattleField { get; set; }
 		public IAttributesHandler? Attributor { get; set; }
-
+		
 		public Game(World world)
 		{
 			_randomizer = new Random(this.GetHashCode() + DateTime.Now.Microsecond);
@@ -31,34 +48,13 @@ namespace GameLogic
 		{
 			for (int warriorId = 0; warriorId < NUMBER_OF_WARRIORS; warriorId++)
 			{
-				var warrior = new Warrior { Id = warriorId, Name = GetNameForWarrior(warriorId) };
+				var warrior = new Warrior { Id = warriorId, Name = WarriorNames[warriorId] };
 
 				warrior.Location = Relocator?.GetEmptyRandomLocation(this) ?? Point.Empty;
 
 				Attributor?.AssignRandomAttributesToWarrior(warrior);
 
 				_warriors.Add(warrior);
-			}
-		}
-
-		private string GetNameForWarrior(int warriorId)
-		{
-			switch (warriorId)
-			{
-				case 0: return "Connor MacLeod";
-				case 1: return "Ramírez";
-				case 2: return "Duncan MacLeod";
-				case 3: return "The Kurgan";
-				case 4: return "Kronos";
-				case 5: return "Timothy of Gilliam";
-				case 6: return "Danny O'Donal";
-				case 7: return "Methos";
-				case 8: return "Mako";
-				case 9: return "Richie Ryan";
-				case 10: return "Slan Quince";
-				case 11: return "Kiem Sun";
-				case 12: return "Felicia Martins";
-				default: return string.Empty;
 			}
 		}
 
