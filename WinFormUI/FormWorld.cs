@@ -12,7 +12,7 @@ namespace WinFormUI
 		private const int WORLD_X_WIDTH = 70;
 		private const int WORLD_Y_HEIGHT = 70;
 		private const int STANDARD_IMAGE_SIZE = 10;
-		private const int MOVEMENT_SPEED_MS = 200;
+		private const int MOVEMENT_SPEED_MS = 50;
 
 		private Point AdjustLocationToCanvas(Point gameLocation) => new Point(gameLocation.X * STANDARD_IMAGE_SIZE, gameLocation.Y * STANDARD_IMAGE_SIZE);
 

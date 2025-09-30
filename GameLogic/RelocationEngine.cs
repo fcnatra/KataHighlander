@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 
 namespace GameLogic
 {
@@ -55,7 +56,12 @@ namespace GameLogic
         {
 			int clampedX = Math.Min(Math.Max(warrior.Location.X, 0), game.Gameboard.XLimit - 1);
 			int clampedY = Math.Min(Math.Max(warrior.Location.Y, 0), game.Gameboard.YLimit - 1);
-            warrior.Location = new Point(clampedX, clampedY);
+
+			if (clampedX != warrior.Location.X || clampedY != warrior.Location.Y)
+			{
+				Debug.WriteLine($"Clamping warrior {warrior.Name} from ({warrior.Location.X}, {warrior.Location.Y}) to ({clampedX}, {clampedY})");
+				warrior.Location = new Point(clampedX, clampedY);
+			}
         }
 
         private List<Point> GetAvailableCoordinatesAroundWarrior(Point warriorLocation, Point offsetDiameter)

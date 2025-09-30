@@ -4,7 +4,6 @@ namespace GameLogic
 {
 	public class Game : IGameState
 	{
-		private const int NUMBER_OF_DEFAULT_WARRIORS = 12;
 		private readonly Point MOVE_OFFSET = new Point(1, 1);
 		private Random _randomizer;
 		
@@ -43,7 +42,7 @@ namespace GameLogic
 			if (Attributor == null)
 				throw new InvalidOperationException("Attributor is not set.");
 
-			for (int warriorId = 0; warriorId < NUMBER_OF_DEFAULT_WARRIORS; warriorId++)
+			for (int warriorId = 0; warriorId < WarriorNames.Count; warriorId++)
 			{
 				var warrior = new Warrior { Id = warriorId, Name = WarriorNames[warriorId] };
 
