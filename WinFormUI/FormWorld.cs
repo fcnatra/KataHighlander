@@ -61,7 +61,7 @@ namespace WinFormUI
 			this._game.Relocator = new GameLogic.RelocationEngine();
 			this._game.BattleField = new GameLogic.FightEngine();
 
-			_game.Start();
+			_game.CreateDefaultWarriors();
 		}
 
 		private void StartPlaying()

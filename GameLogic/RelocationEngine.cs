@@ -29,31 +29,41 @@ namespace GameLogic
 		}
 
 		public Point RelocateWarrior(IGameState game, Warrior warrior, Point offsetDiameter)
-		{
-			List<Point> possibleCoordinates = GetAvailableCoordinates(warrior.Location, offsetDiameter);
-			bool relocated = false;
+        {
+            ClampWarriorToLimits(game, warrior);
 
-			while (!relocated && possibleCoordinates.Count > 0)
-			{
-				int randomIndex = _randomizer.Next(0, possibleCoordinates.Count() - 1);
-				var coordToTry = possibleCoordinates[randomIndex];
-				possibleCoordinates.RemoveAt(randomIndex);
+            List<Point> possibleCoordinates = GetAvailableCoordinatesAroundWarrior(warrior.Location, offsetDiameter);
 
-				if (IsValidLocationForANewWarrior(game, coordToTry))
-				{
-					warrior.Location = coordToTry;
-					relocated = true;
-				}
-			}
-			return warrior.Location;
-		}
+            bool relocated = false;
 
-		private List<Point> GetAvailableCoordinates(Point location, Point offsetDiameter)
+            while (!relocated && possibleCoordinates.Count > 0)
+            {
+                int randomIndex = _randomizer.Next(0, possibleCoordinates.Count() - 1);
+                var coordToTry = possibleCoordinates[randomIndex];
+                possibleCoordinates.RemoveAt(randomIndex);
+
+                if (IsValidLocationForANewWarrior(game, coordToTry))
+                {
+                    warrior.Location = coordToTry;
+                    relocated = true;
+                }
+            }
+            return warrior.Location;
+        }
+
+        private static void ClampWarriorToLimits(IGameState game, Warrior warrior)
+        {
+			int clampedX = Math.Min(Math.Max(warrior.Location.X, 0), game.Gameboard.XLimit - 1);
+			int clampedY = Math.Min(Math.Max(warrior.Location.Y, 0), game.Gameboard.YLimit - 1);
+            warrior.Location = new Point(clampedX, clampedY);
+        }
+
+        private List<Point> GetAvailableCoordinatesAroundWarrior(Point warriorLocation, Point offsetDiameter)
 		{
 			List<Point> availableCoordinates = new();
 
-			for (int x = location.X - offsetDiameter.X; x <= location.X + offsetDiameter.X; x++)
-				for (int y = location.Y - offsetDiameter.Y; y <= location.Y + offsetDiameter.Y; y++)
+			for (int x = warriorLocation.X - offsetDiameter.X; x <= warriorLocation.X + offsetDiameter.X; x++)
+				for (int y = warriorLocation.Y - offsetDiameter.Y; y <= warriorLocation.Y + offsetDiameter.Y; y++)
 					availableCoordinates.Add(new Point(x, y));
 
 			return availableCoordinates;

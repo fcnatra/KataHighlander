@@ -8,68 +8,65 @@ namespace Tests.KataHighlander
 {
 	public class GameTests
 	{
-		World _world;
-		Game _game;
-		RelocationEngine _relocationEngine;
+		private World _world;
+		private Game _game;
+        private AttributesHandler _attributor;
+        private RelocationEngine _relocationEngine;
 
 		public GameTests()
 		{
 			int xLimit = 10;
 			int yLimit = 10;
 			_world = new World(xLimit, yLimit);
-
 			_game = new Game(_world);
 
+			_attributor = new AttributesHandler();
 			_relocationEngine = new RelocationEngine();
 		}
 
 		[Fact]
-		public void WhenGameStarts_ThereAre_12WarriorsInTheWorld()
+		public void WhenGameStarts_ThereAre_2WarriorsInTheWorld()
 		{
-			var game = new Game(new World(10, 10));
-			game.Attributor = A.Fake<IAttributesHandler>();
-
 			// ACT
-			game.Start();
+			_game.Warriors.Add(new Warrior { Id = 1, Name = "Warrior 1", Location = new Point(1, 1) });
+			_game.Warriors.Add(new Warrior { Id = 2, Name = "Warrior 2", Location = new Point(2, 2) });
 
 			// ASSERT
-			var expectedNumberOfWarriors = 12;
-			Assert.Equal(expectedNumberOfWarriors, game.Warriors.Count());
+			var expectedNumberOfWarriors = 2;
+			Assert.Equal(expectedNumberOfWarriors, _game.Warriors.Count());
 		}
 
 		[Fact]
-		public void WhenGameStarts_EachWarriorIsIn_DifferentLocation()
+		public void WhenDefaultGameStarts_EachWarriorIsIn_DifferentLocation()
 		{
-			var game = new Game(new World(10, 10));
-			game.Attributor = A.Fake<IAttributesHandler>();
-			game.Relocator = new RelocationEngine();
-
+			_game.Relocator = _relocationEngine;
+			_game.Attributor = _attributor;
+			
 			// ACT
-			game.Start();
+			_game.CreateDefaultWarriors();
 
 			// ASSERT
-			var warriors = game.Warriors;
+			var warriors = _game.Warriors;
 			var locations = warriors.Select(w => w.Location);
 			Assert.Equal(locations.Count(), locations.Distinct().Count());
 		}
 
 		[Fact]
-		public void WhenASecondGameStarts_WarriorsLocationsAre_DifferentThanInFirst()
+		public void WhenASecondDefaultGameStarts_WarriorsLocationsAre_DifferentThanInFirst()
 		{
-			var game = new Game(new World(10, 10));
-			game.Attributor = A.Fake<IAttributesHandler>();
-			game.Relocator = new RelocationEngine();
+			_game.Attributor = _attributor;
+			_game.Relocator = _relocationEngine;
 
 			var secondGame = new Game(_world);
-			secondGame.Attributor = A.Fake<IAttributesHandler>();
-			secondGame.Relocator = new RelocationEngine();
+			secondGame.Attributor = _attributor;
+			secondGame.Relocator = _relocationEngine;
 
 			// ACT
-			game.Start();
-			secondGame.Start();
+			_game.CreateDefaultWarriors();
+			secondGame.CreateDefaultWarriors();
 
 			// ASSERT
-			var warriors1 = game.Warriors;
+			var warriors1 = _game.Warriors;
 			var locations1 = warriors1.Select(w => w.Location);
 
 			var warriors2 = secondGame.Warriors;
@@ -79,15 +76,19 @@ namespace Tests.KataHighlander
 		}
 
 		[Fact]
-		public void WhenGameStarts_AllWarriorsAre_InsideWorldLimits()
+		public void Warriors_OutsideLimits_AreRelocatedInside()
 		{
-            World world = new(10, 10);
-            var game = new Game(world);
+			var world = new World(5, 5);
+			var game = new Game(world);
+
 			game.Attributor = A.Fake<IAttributesHandler>();
 			game.Relocator = new RelocationEngine();
 
+			game.Warriors.Add(new Warrior { Id = 1, Name = "Warrior 1", Location = new Point(1, 1) });
+			game.Warriors.Add(new Warrior { Id = 2, Name = "Warrior 2", Location = new Point(20, 20) });
+
 			// ACT
-			game.Start();
+			game.NextRound();
 
 			// ASSERT
 			var warriors = game.Warriors;
@@ -109,7 +110,7 @@ namespace Tests.KataHighlander
             var game = new Game(world);
 			game.Attributor = A.Fake<IAttributesHandler>();
 			game.Relocator = new RelocationEngine();
-			game.Start();
+			game.CreateDefaultWarriors();
 			var warriors = game.Warriors;
 			var locations = warriors.Select(w => w.Location).ToList();
 
@@ -128,7 +129,7 @@ namespace Tests.KataHighlander
 			_game.Relocator = new RelocationEngine();
 			_game.Attributor = new AttributesHandler();
 
-			_game.Start();
+			_game.CreateDefaultWarriors();
 			var warriors = _game.Warriors;
 			var ages = warriors.Select(w => w.Attributes.Age + 1).ToList();
 			var healths = warriors.Select(w => w.Attributes.Health + 1).ToList();
@@ -154,7 +155,7 @@ namespace Tests.KataHighlander
 			_game = new Game(world);
 			_game.Relocator = new RelocationEngine();
 			_game.Attributor = new AttributesHandler();
-			_game.Start();
+			_game.CreateDefaultWarriors();
 			var warriors = _game.Warriors;
 
 			// ACT
@@ -179,7 +180,7 @@ namespace Tests.KataHighlander
 			_game = new Game(world);
 			_game.Relocator = new RelocationEngine();
 			_game.Attributor = new AttributesHandler();
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			// ACT
 			_game.NextRound();
@@ -198,7 +199,7 @@ namespace Tests.KataHighlander
 			_game.Attributor = new AttributesHandler();
 
 			// ACT
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			// ASSERT
 			   Assert.DoesNotContain(_game.Warriors, w => w.Attributes.Age == 0 || w.Attributes.Health == 0 || w.Attributes.Strength == 0);
@@ -216,7 +217,7 @@ namespace Tests.KataHighlander
 			_game.Attributor = new AttributesHandler();
 			_game.Relocator = fakeRelocator;
 			_game.BattleField = fakeFightEngine;
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			Warrior warrior1 = _game.Warriors.First(w => w.Id == warrior1Id);
 			Warrior warrior2 = _game.Warriors.First(w => w.Id == warrior2Id);
@@ -244,7 +245,7 @@ namespace Tests.KataHighlander
 			_game.Attributor = fakeAttributor;
 
 			// ACT
-			_game.Start();
+			_game.CreateDefaultWarriors();
 			_game.NextRound();
 
 			// ASSERT
@@ -265,7 +266,7 @@ namespace Tests.KataHighlander
 			_game.BattleField.Attributor = fakeAttributor;
 			_game.Relocator = fakeRelocator;
 			_game.Attributor = fakeAttributor;
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			// ACT
 			_game.NextRound();
@@ -288,7 +289,7 @@ namespace Tests.KataHighlander
 			_game.BattleField.Attributor = fakeAttributor;
 			_game.Relocator = fakeRelocator;
 			_game.Attributor = fakeAttributor;
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			// ACT
 			_game.NextRound();
@@ -320,7 +321,7 @@ namespace Tests.KataHighlander
 			_game.Relocator = fakeRelocator;
 			_game.Attributor = new AttributesHandler();
 			_game.BattleField = fakeBattleField;
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			   int w1Strength = _game.Warriors.First(w => w.Id == warrior1Id).Attributes.Strength;
 			   int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id).Attributes.Strength;
@@ -354,7 +355,7 @@ namespace Tests.KataHighlander
 			_game.Relocator = fakeRelocator;
 			_game.Attributor = new AttributesHandler();
 			_game.BattleField = fakeBattleField;
-			_game.Start();
+			_game.CreateDefaultWarriors();
 
 			   int w1Health = _game.Warriors.First(w => w.Id == warrior1Id).Attributes.Health;
 			   int w2Health = _game.Warriors.First(w => w.Id == warrior2Id).Attributes.Health;

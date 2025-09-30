@@ -4,9 +4,8 @@ namespace GameLogic
 {
 	public class Game : IGameState
 	{
-		private const int NUMBER_OF_WARRIORS = 12;
+		private const int NUMBER_OF_DEFAULT_WARRIORS = 12;
 		private readonly Point MOVE_OFFSET = new Point(1, 1);
-		private List<Warrior> _warriors;
 		private Random _randomizer;
 		
 		private static readonly List<string> WarriorNames = new List<string>
@@ -26,7 +25,7 @@ namespace GameLogic
 			"Felicia Martins"
 		};
 
-		public List<Warrior> Warriors { get { return new List<Warrior>(_warriors); } }
+		public List<Warrior> Warriors { get; set; }
 		public World Gameboard { get ; set; }
 		public IRelocator? Relocator { get; set; }
 		public IFightEngine? BattleField { get; set; }
@@ -36,20 +35,15 @@ namespace GameLogic
 		{
 			_randomizer = new Random(this.GetHashCode() + DateTime.Now.Microsecond);
 			Gameboard = world;
-			_warriors = [];
+			Warriors = [];
 		}
 
-		public void Start()
-		{
-			CreateWarriors();
-		}
-
-		private void CreateWarriors()
+		public void CreateDefaultWarriors()
 		{
 			if (Attributor == null)
 				throw new InvalidOperationException("Attributor is not set.");
 
-			for (int warriorId = 0; warriorId < NUMBER_OF_WARRIORS; warriorId++)
+			for (int warriorId = 0; warriorId < NUMBER_OF_DEFAULT_WARRIORS; warriorId++)
 			{
 				var warrior = new Warrior { Id = warriorId, Name = WarriorNames[warriorId] };
 
@@ -57,22 +51,22 @@ namespace GameLogic
 
 				warrior.Attributes = Attributor.CreateRandomAttributes();
 
-				_warriors.Add(warrior);
+				Warriors.Add(warrior);
 			}
 		}
 
 		public void NextRound()
 		{
-			_warriors.ForEach((w) => Relocator?.RelocateWarrior(this, w, MOVE_OFFSET));
+			Warriors.ForEach((w) => Relocator?.RelocateWarrior(this, w, MOVE_OFFSET));
 
 			RunFights();
 
-			_warriors.ForEach((w) => Attributor?.UpdateWarriorAttributesForNextRound(w));
+			Warriors.ForEach((w) => Attributor?.UpdateWarriorAttributesForNextRound(w));
 		}
 
 		private void RunFights()
 		{
-			var groupsOfTwo = _warriors.GroupBy(warrior => warrior.Location).Where(group => group.Count() == 2);
+			var groupsOfTwo = Warriors.GroupBy(warrior => warrior.Location).Where(group => group.Count() == 2);
 
 			foreach (var group in groupsOfTwo)
 			{
@@ -89,6 +83,6 @@ namespace GameLogic
 			};
 		}
 
-		private void RemoveLooser(Warrior warrior) => _warriors.Remove(warrior);
+		private void RemoveLooser(Warrior warrior) => Warriors.Remove(warrior);
 	}
 }
