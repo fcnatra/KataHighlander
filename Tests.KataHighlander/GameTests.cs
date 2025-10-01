@@ -249,13 +249,7 @@ namespace Tests.KataHighlander
 				Attributes = new WarriorAttributes { Health = attributes2/10, Strength = attributes2%10 }
 			};
 
-			IRelocator fakeRelocator = A.Fake<IRelocator>();
-			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
-				.ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
-				{
-					warrior.Location = new Point(4, 4);
-					return warrior.Location;
-				}); ;
+			IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = _attributor;
@@ -299,39 +293,42 @@ namespace Tests.KataHighlander
 
 		[Fact]
 		public void GivenAFight_WinnerTakesStrengthFromLooser()
-		{
-			// ARRANGE
-			Warrior? winner = null;
+        {
+            // ARRANGE
+            var warrior1 = new Warrior
+            {
+                Id = 1,
+                Location = new Point(3, 3),
+                Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
+            };
 
-			var warrior1Id = 1;
-			var warrior2Id = 2;
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsTogether_Warriors_ById(warrior1Id, warrior2Id);
+            var warrior2 = new Warrior
+            {
+                Id = 2,
+                Location = new Point(3, 3),
+                Attributes = new WarriorAttributes { Health = 1, Strength = 1 }
+            };
 
-			IFightEngine fakeBattleField = A.Fake<IFightEngine>();
-			A.CallTo(() => fakeBattleField.FightAndGetWinner(A<Warrior>._, A<Warrior>._))
-				.WhenArgumentsMatch((Warrior w1, Warrior w2) => w1.Id == warrior1Id && w2.Id == warrior2Id)
-				.Invokes((Warrior w1, Warrior w2) =>
-				{
-					var batterField = new FightEngine { Attributor = new AttributesHandler() };
-					winner = batterField.FightAndGetWinner(w1, w2);
-				});
+            IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
 
-			_game.Relocator = fakeRelocator;
-			_game.Attributor = new AttributesHandler();
-			_game.BattleField = fakeBattleField;
-			_game.CreateDefaultWarriors();
+            _game.BattleField = new FightEngine { Attributor = _attributor };
+            _game.Relocator = fakeRelocator;
+            _game.Attributor = _attributor;
 
-			   int w1Strength = _game.Warriors.First(w => w.Id == warrior1Id).Attributes.Strength;
-			   int w2Strength = _game.Warriors.First(w => w.Id == warrior2Id).Attributes.Strength;
+			_game.Warriors.Add(warrior1);
+			_game.Warriors.Add(warrior2);
 
-			// ACT
-			_game.NextRound();
+            int w1Strength = warrior1.Attributes.Strength;
+            int w2Strength = warrior2.Attributes.Strength;
 
-			// ASSERT
-			Assert.Equal(w1Strength + w2Strength + 1, winner?.Attributes.Strength);
-		}
+            // ACT
+            _game.NextRound();
 
-		[Fact]
+            // ASSERT
+            Assert.Equal(w1Strength + w2Strength + 1, warrior1?.Attributes.Strength);
+        }
+
+        [Fact]
 		public void GivenAFight_WinnerIncrementsItsHealthOnTwoPoints()
 		{
 			// ARRANGE
@@ -388,6 +385,18 @@ namespace Tests.KataHighlander
 
 			return fakeAttributor;
 		}
+
+        private static IRelocator FakeRelocator_ThatPutsWarriorsTogether()
+        {
+            IRelocator fakeRelocator = A.Fake<IRelocator>();
+            A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
+                .ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
+                {
+                    warrior.Location = new Point(4, 4);
+                    return warrior.Location;
+                });
+            return fakeRelocator;
+        }
 
 		private IRelocator FakeRelocator_ThatPutsTogether_Warriors_ById(int warrior1Id, int warrior2Id)
 		{
