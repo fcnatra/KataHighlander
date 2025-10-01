@@ -22,51 +22,58 @@ namespace WinFormUI
 		}
 
 		private void FormWorld_Load(object sender, EventArgs e)
-		{
-			ImproveGraphicsPerformance();
-			InitializeGame();
+        {
+            ImproveGraphicsPerformance();
+            _game = InitializeGame();
 
-			if (_game is null)
-			{
-				MessageBox.Show("Can't load the game.");
-				return;
-			}
+            _imageOps = InitializeImageOperations(_game);
+            if (_imageOps is null)
+                return;
 
-			_imageOps = new ImageOps(this, _game.Warriors);
-			try
-			{
-				_imageOps.SetupBackground();
-				_warriorsUI = _imageOps.LoadImages();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Can't load the images: {ex}");
-				return;
-			}
+            this.Text = $"WARRIORS: {_game.Warriors.Count()}";
+            StartPlaying();
+        }
 
-			this.Text = $"WARRIORS: {_game.Warriors.Count()}";
-			StartPlaying();
-		}
+        private ImageOps? InitializeImageOperations(Game game)
+        {
+            ImageOps? imageOps = new(this, game.Warriors);
+            try
+            {
+                imageOps.SetupBackground();
+                _warriorsUI = imageOps.LoadImages();
+            }
+            catch (Exception ex)
+            {
+				imageOps = null;
+                MessageBox.Show($"Can't load the images: {ex}");
+            }
 
-		private void ImproveGraphicsPerformance()
+            return imageOps;
+        }
+
+        private void ImproveGraphicsPerformance()
 		{
 			this.DoubleBuffered = true;
 		}
 
-		private void InitializeGame()
+		private Game InitializeGame()
 		{
-			var world = new GameLogic.World(WORLD_X_WIDTH, WORLD_Y_HEIGHT);
-			this._game = new GameLogic.Game(world);
-			this._game.Attributor = new GameLogic.AttributesHandler();
-			this._game.Relocator = new GameLogic.RelocationEngine();
-			this._game.BattleField = new GameLogic.FightEngine();
+			var world = new World(WORLD_X_WIDTH, WORLD_Y_HEIGHT);
 
-			_game.CreateDefaultWarriors();
+			Game game = new(world);
+			game.Attributor = new AttributesHandler();
+			game.Relocator = new RelocationEngine();
+			game.BattleField = new FightEngine();
+
+			game.CreateDefaultWarriors();
+
+			return game;
 		}
 
 		private void StartPlaying()
 		{
-			movementTimer.Interval = MOVEMENT_SPEED_MS;
+			movementTimer.Interval = MOVEMENT_SPEED_MS;			
+			movementTimer.Tick += movementTimer_Tick;
 			movementTimer.Start();
 		}
 
@@ -133,7 +140,7 @@ namespace WinFormUI
 			return step;
 		}
 
-		private void movementTimer_Tick(object sender, EventArgs e)
+		private void movementTimer_Tick(object? sender, EventArgs e)
 		{
 			_game?.NextRound();
 			this.Invalidate();

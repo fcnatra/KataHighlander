@@ -35,7 +35,6 @@
 			// movementTimer
 			// 
 			movementTimer.Enabled = true;
-			movementTimer.Tick += movementTimer_Tick;
 			// 
 			// FormWorld
 			// 
