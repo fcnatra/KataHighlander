@@ -43,9 +43,10 @@ namespace GameLogic
 			if (Attributor == null)
 				throw new InvalidOperationException("Attributor is not set.");
 
-			for (int warriorId = 0; warriorId < WarriorNames.Count; warriorId++)
+			var numOfWarriors = WarriorNames.Count;
+			for (int i = 0; i < numOfWarriors; i++)
 			{
-				var warrior = new Warrior { Id = warriorId, Name = WarriorNames[warriorId] };
+				var warrior = new Warrior { Id = i, Name = WarriorNames[i] };
 
 				warrior.Location = Relocator?.GetEmptyRandomLocation(this) ?? Point.Empty;
 

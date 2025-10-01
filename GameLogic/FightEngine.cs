@@ -45,6 +45,9 @@
 
 		private double LuckyBonus(WarriorRank rank) => rank.Rank * 0.1;
 
-		private WarriorRank CalculateRank(Warrior warrior) => new WarriorRank(warrior, (warrior.Attributes.Health / (double)3) + warrior.Attributes.Strength);
+		private WarriorRank CalculateRank(Warrior warrior)
+		{
+			return new WarriorRank(warrior, (warrior.Attributes.Health / (double)3) + warrior.Attributes.Strength);
+		}
 	}
 }
