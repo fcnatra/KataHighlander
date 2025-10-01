@@ -34,23 +34,6 @@ namespace WinFormUI
             StartPlaying();
         }
 
-        private ImageOps? InitializeImageOperations(Game game)
-        {
-            ImageOps? imageOps = new(this, game.Warriors);
-            try
-            {
-                imageOps.SetupBackground();
-                _warriorsUI = imageOps.LoadImages();
-            }
-            catch (Exception ex)
-            {
-				imageOps = null;
-                MessageBox.Show($"Can't load the images: {ex}");
-            }
-
-            return imageOps;
-        }
-
         private void ImproveGraphicsPerformance()
 		{
 			this.DoubleBuffered = true;
@@ -70,11 +53,39 @@ namespace WinFormUI
 			return game;
 		}
 
+        private ImageOps? InitializeImageOperations(Game game)
+        {
+            ImageOps? imageOps = new(this, game.Warriors);
+            try
+            {
+                imageOps.SetupBackground();
+                _warriorsUI = imageOps.LoadImages();
+            }
+            catch (Exception ex)
+            {
+				imageOps = null;
+                MessageBox.Show($"Can't load the images: {ex}");
+            }
+
+            return imageOps;
+        }
+
 		private void StartPlaying()
 		{
 			movementTimer.Interval = MOVEMENT_SPEED_MS;			
 			movementTimer.Tick += movementTimer_Tick;
 			movementTimer.Start();
+		}
+
+		private void movementTimer_Tick(object? sender, EventArgs e)
+		{
+			_game?.NextRound();
+			this.Invalidate();
+		}
+
+		private void FormWorld_Click(object sender, EventArgs e)
+		{
+			movementTimer.Enabled = !movementTimer.Enabled;
 		}
 
 		private void FormWorld_Paint(object sender, PaintEventArgs e)
@@ -138,17 +149,6 @@ namespace WinFormUI
 			var step = warriorUI.LastDirection != direction ? 1 : warriorUI.LastDirectionStep + 1;
 			if (step > availableSteps) step = 1;
 			return step;
-		}
-
-		private void movementTimer_Tick(object? sender, EventArgs e)
-		{
-			_game?.NextRound();
-			this.Invalidate();
-		}
-
-		private void FormWorld_Click(object sender, EventArgs e)
-		{
-			movementTimer.Enabled = !movementTimer.Enabled;
 		}
 
 		private void UpdateStatusInformation()
