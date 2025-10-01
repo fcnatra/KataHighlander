@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Tests.KataHighlander
 {
-	public class GameTests
+	public partial class GameTests
 	{
 		private World _world;
 		private Game _game;
@@ -108,7 +108,7 @@ namespace Tests.KataHighlander
 		public void GivenNextRound_AllWarriors_Move()
 		{
 			// ARRANGE
-			var (warrior1, warrior2) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
 			_game.Attributor = A.Fake<IAttributesHandler>();
 			_game.Relocator = new RelocationEngine();
@@ -131,7 +131,7 @@ namespace Tests.KataHighlander
 		public void GivenNextRound_WarriorsAttributesAreIncremented_ByOne()
 		{
 			// ARRANGE
-			var (warrior1, warrior2) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 			warrior1.Location = new Point(1, 1);
 			warrior2.Location = new Point(8, 8);// far away
 
@@ -195,8 +195,8 @@ namespace Tests.KataHighlander
 			var world = new World(1, 1);
 			_game = new Game(world);
 
-			var (warrior1, warrior2) = GimmeTwoWarriors();
-			var (warrior3, warrior4) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
+			var (warrior3, warrior4) = TestTools.GimmeTwoWarriors();
 
 			warrior1.Location = new Point(0, 1);
 			warrior2.Location = new Point(1, 1);
@@ -239,9 +239,9 @@ namespace Tests.KataHighlander
 		public void GivenTwoWarriors_InSameLocation_WarriorsFight()
 		{
 			// ARRANGE
-			var (warrior1, warrior2) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
 			IFightEngine fakeFightEngine = A.Fake<IFightEngine>();
 
 			_game.Attributor = new AttributesHandler();
@@ -264,7 +264,7 @@ namespace Tests.KataHighlander
 		public void GivenAFight_StrongerWarrior_WinsToTheWeaker(int attributes1, int attributes2, int winnerId)
 		{
 			// ARRANGE
-			var (warrior1, warrior2) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
 			warrior1.Attributes.Health = attributes1 / 10;
 			warrior1.Attributes.Strength = attributes1 % 10;
@@ -272,7 +272,7 @@ namespace Tests.KataHighlander
 			warrior2.Attributes.Health = attributes2 / 10;
 			warrior2.Attributes.Strength = attributes2 % 10;
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = _attributor;
@@ -294,9 +294,9 @@ namespace Tests.KataHighlander
 		public void GivenAFight_WorldRegistersAFight_InThatLocation()
 		{
 			// ARRANGE
-			var (warrior1, warrior2) = GimmeTwoWarriors();
+			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
 
 			_game.BattleField = new FightEngine { Attributor = _attributor };
 			_game.Relocator = fakeRelocator;
@@ -317,7 +317,7 @@ namespace Tests.KataHighlander
 		public void GivenAFight_WinnerTakesAttributesFromLoser()
 		{
 			// ARRANGE
-			var (warriorWinner, warriorLooser) = GimmeTwoWarriors();
+			var (warriorWinner, warriorLooser) = TestTools.GimmeTwoWarriors();
 
 			warriorWinner.Attributes.Health = 6;
 			warriorWinner.Attributes.Strength = 3;
@@ -325,7 +325,7 @@ namespace Tests.KataHighlander
 			warriorLooser.Attributes.Health = 1;
 			warriorLooser.Attributes.Strength = 1;
 
-			IRelocator fakeRelocator = FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
 
 			IFightEngine fakeBattleField = new FightEngine { Attributor = _attributor };
 			_game.Relocator = fakeRelocator;
@@ -345,36 +345,6 @@ namespace Tests.KataHighlander
 			// ASSERT
 			Assert.Equal(healthWinner + 3, warriorWinner.Attributes.Health);
 			Assert.Equal(strengthWinner + strengthLooser + 1, warriorWinner?.Attributes.Strength);
-		}
-
-		private static IRelocator FakeRelocator_ThatPutsWarriorsTogether()
-		{
-			IRelocator fakeRelocator = A.Fake<IRelocator>();
-			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
-				.ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
-				{
-					warrior.Location = new Point(4, 4);
-					return warrior.Location;
-				});
-			return fakeRelocator;
-		}
-		
-		private static (Warrior, Warrior) GimmeTwoWarriors()
-		{
-			var warrior1 = new Warrior
-			{
-				Id = 1,
-				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
-			};
-
-			var warrior2 = new Warrior
-			{
-				Id = 2,
-				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 1, Strength = 1 }
-			};
-			return (warrior1, warrior2);
 		}
 	}
 }
