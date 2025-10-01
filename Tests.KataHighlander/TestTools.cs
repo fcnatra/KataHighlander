@@ -10,7 +10,7 @@ namespace Tests.KataHighlander
         // Add this new class (in a separate file or at the bottom of this file if needed)
         internal static class TestTools
 	{
-		internal static IRelocator FakeRelocator_ThatPutsWarriorsTogether()
+		internal static IRelocator FakeRelocator_ThatPutsWarriorsTogether_OnLocation_4_4()
 		{
 			IRelocator fakeRelocator = A.Fake<IRelocator>();
 			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))

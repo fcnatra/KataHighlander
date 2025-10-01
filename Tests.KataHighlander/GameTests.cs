@@ -241,7 +241,7 @@ namespace Tests.KataHighlander
 			// ARRANGE
 			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
-			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether_OnLocation_4_4();
 			IFightEngine fakeFightEngine = A.Fake<IFightEngine>();
 
 			_game.Attributor = new AttributesHandler();
@@ -272,7 +272,7 @@ namespace Tests.KataHighlander
 			warrior2.Attributes.Health = attributes2 / 10;
 			warrior2.Attributes.Strength = attributes2 % 10;
 
-			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether_OnLocation_4_4();
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = _attributor;
@@ -296,7 +296,7 @@ namespace Tests.KataHighlander
 			// ARRANGE
 			var (warrior1, warrior2) = TestTools.GimmeTwoWarriors();
 
-			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether_OnLocation_4_4();
 
 			_game.BattleField = new FightEngine { Attributor = _attributor };
 			_game.Relocator = fakeRelocator;
@@ -325,7 +325,7 @@ namespace Tests.KataHighlander
 			warriorLooser.Attributes.Health = 1;
 			warriorLooser.Attributes.Strength = 1;
 
-			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether();
+			IRelocator fakeRelocator = TestTools.FakeRelocator_ThatPutsWarriorsTogether_OnLocation_4_4();
 
 			IFightEngine fakeBattleField = new FightEngine { Attributor = _attributor };
 			_game.Relocator = fakeRelocator;
