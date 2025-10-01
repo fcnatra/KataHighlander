@@ -229,22 +229,24 @@ namespace Tests.KataHighlander
 			A.CallTo(() => fakeFightEngine.FightAndGetWinner(warrior1, warrior2)).MustHaveHappenedOnceExactly();
 		}
 
-		[Fact]
-		public void GivenAFight_WarriorWithAttr63_WinsToWarriorWithAttr23()
+		[Theory]
+		[InlineData(63,23,1)]
+		[InlineData(62,63,2)]
+		public void GivenAFight_StrongerWarrior_WinsToTheWeaker(int attributes1, int attributes2, int winnerId)
 		{
 			// ARRANGE
 			var warrior1 = new Warrior
 			{
 				Id = 1,
 				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
+				Attributes = new WarriorAttributes { Health = attributes1/10, Strength = attributes1%10 }
 			};
 
 			var warrior2 = new Warrior
 			{
 				Id = 2,
 				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 2, Strength = 3 }
+				Attributes = new WarriorAttributes { Health = attributes2/10, Strength = attributes2%10 }
 			};
 
 			IRelocator fakeRelocator = A.Fake<IRelocator>();
@@ -253,7 +255,7 @@ namespace Tests.KataHighlander
 				{
 					warrior.Location = new Point(4, 4);
 					return warrior.Location;
-				});;
+				}); ;
 
 			_game.BattleField = new FightEngine();
 			_game.BattleField.Attributor = _attributor;
@@ -267,48 +269,8 @@ namespace Tests.KataHighlander
 			_game.NextRound();
 
 			// ASSERT
-			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior2.Id);
-		}
-
-		[Fact]
-		public void GivenAFight_Warrior62_LossesTo_Warrior63()
-		{
-			// ARRANGE
-			var warrior1 = new Warrior
-			{
-				Id = 1,
-				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 6, Strength = 2 }
-			};
-
-			var warrior2 = new Warrior
-			{
-				Id = 2,
-				Location = new Point(3, 3),
-				Attributes = new WarriorAttributes { Health = 6, Strength = 3 }
-			};
-
-			IRelocator fakeRelocator = A.Fake<IRelocator>();
-			A.CallTo(() => fakeRelocator.RelocateWarrior(A<IGameState>._, A<Warrior>._, A<Point>._))
-				.ReturnsLazily((IGameState game, Warrior warrior, Point offset) =>
-				{
-					warrior.Location = new Point(4, 4);
-					return warrior.Location;
-				});;
-
-			_game.BattleField = new FightEngine();
-			_game.BattleField.Attributor = _attributor;
-			_game.Relocator = fakeRelocator;
-			_game.Attributor = _attributor;
-
-			_game.Warriors.Add(warrior1);
-			_game.Warriors.Add(warrior2);
-
-			// ACT
-			_game.NextRound();
-
-			// ASSERT
-			Assert.DoesNotContain(_game.Warriors, x => x.Id == warrior1.Id);
+			Assert.Contains(_game.Warriors, x => x.Id == winnerId);
+			Assert.DoesNotContain(_game.Warriors, x => x.Id != winnerId);
 		}
 
 		[Fact]
