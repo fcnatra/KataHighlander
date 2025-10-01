@@ -41,7 +41,7 @@ Ways to calculate who wins (choose one for the Kata)
 
 ## RESTRICTIONS for second/third iterations of the KATA:
 
-1. Sanctuary squares (holy ground) where no fights occur - they appear randomly at the beginning of the game.
+1. Sanctuary squares (holy ground) where no fights occur - they appear randomly at the beginning of the game, at least in the 3% of the board.
 
 2. At the beginning of the game, not all characters appear on the board, only some, and in each turn a new immortal may or may not appear on the board (until reaching 12).
 
