@@ -10,7 +10,7 @@ The game works on a turn-based system.
 
 The game starts with a board and a series of characters on it, in random positions.
 
-Number of characters: 12
+Number of characters: 13
 
 On each turn, the characters make a random move to any of the 8 adjacent squares.
 
@@ -47,6 +47,6 @@ Ways to calculate who wins (choose one for the Kata)
     - For example, on a 10x10 board: `10 × 10 × 0.03 = 3` sanctuary squares.
     - There must be at least one sanctuary on the board.
 
-2. At the beginning of the game, not all characters appear on the board, only some, and in each turn a new immortal may or may not appear on the board (until reaching 12). No more than 12 must be in the board at the same time.
+2. At the beginning of the game, not all characters appear on the board, only some, and in each turn a new immortal may or may not appear on the board (until reaching 13). No more than 13 must be in the board at the same time.
 
 3. Each square where a fight has occurred becomes a sanctuary square.

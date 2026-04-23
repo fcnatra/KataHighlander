@@ -27,7 +27,7 @@ namespace WinFormUI
 		private WarriorUI LoadWarriorImages(Warrior warrior)
 		{
 			var name = warrior.Name;
-			if (!Directory.GetFiles($"Resources\\Warriors\\", $"{name}*.png").Any())
+			if (!Directory.GetFiles("Resources\\Warriors\\", $"{name}*.png").Any())
 				name = "default";
 
 			var warriorUI = new WarriorUI(warrior.Id, name);
